@@ -1,12 +1,18 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import playerRoutes from "./routes/player.route";
+import { apiLimiter } from "./middlewares/rateLimiter.middleware";
 
 dotenv.config();
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
+
+app.use("/api", apiLimiter, playerRoutes);
+
 
 app.get("/", (_: Request, res: Response) => {
   res.send(`
@@ -67,6 +73,7 @@ app.get("/health", (_: Request, res: Response) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
 });
